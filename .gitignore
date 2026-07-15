@@ -1,0 +1,29 @@
+
+.venv/
+venv/
+env/
+
+
+__pycache__/
+*.py[cod]
+
+
+.ipynb_checkpoints/
+
+.env
+.env.*
+!.env.example
+
+
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Modelos entrenados
+models/*
+!models/.gitkeep
+
+# Editores
+.vscode/
+.idea/
