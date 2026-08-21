@@ -15,7 +15,7 @@ Como se puede ver en el README dichas imágenes son un conjunto de radiografías
 
 ## Extracción de características
 
-    Es el proceso mediante el cual se transforma información compleja, como una imagen, en un conjunto de variables numéricas que contienen propiedades consideradas relevantes para el problema.
+> Es el proceso mediante el cual se transforma información compleja, como una imagen, en un conjunto de variables numéricas que contienen propiedades consideradas relevantes para el problema.
 
 La extracción de características es una fase crucial en la clasificación de enfermedades respiratorias, ya que permite identificar patrones y rasgos asociados a afecciones específicas. Consiste en obtener información de alto nivel a partir de imágenes, como el color, la forma y la textura, asegurando que solo se consideren las áreas relevantes para el análisis [@tonni2025framework].
 
