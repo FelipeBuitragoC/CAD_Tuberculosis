@@ -1,41 +1,61 @@
 import numpy as np
 
-from app.image_processing.quality import calculate_metrics
 
-
-def validate_image(decoded_img: np.ndarray, image_format: str, threshold_metrics: dict[str, float]) -> tuple[bool, list]:
+def validate_image(decoded_img: np.ndarray, image_format: str, metrics: dict[str, float], threshold_metrics: dict[str, float]) -> tuple[bool, list[str]]:
     """
-    Valida la imagen decodificada y su formato.
+    Valida características técnicas y métricas de calidad
+    de una imagen.
 
     Args:
-        decoded_img (np.ndarray): Imagen decodificada.
-        image_format (str): Formato de la imagen.
+        decoded_img:
+            Imagen decodificada.
+
+        image_format:
+            Formato de la imagen.
+
+        metrics:
+            Métricas calculadas previamente.
+
+        threshold_metrics:
+            Umbrales definidos para aceptar/rechazar.
 
     Returns:
-        tuple[bool, list]: Una tupla con un valor booleano que indica si la imagen es válida y una lista de mensajes de error en caso de que no lo sea.
+        (valid, issues)
     """
-    valid: bool = True
-    issue: list[str] = []
 
-    metrics = calculate_metrics(decoded_img)
+    issues = []
 
-    if type(decoded_img) is not np.ndarray:
-        issue.append("El tipo de la imagen decodificada debe ser un array de numpy.")
+    # Validaciones estructurales
 
-    if decoded_img.shape != (512, 512):
-        issue.append(f"La imagen decodificada debe tener dimensiones 512x512, pero tiene {decoded_img.shape}.")
+    if not isinstance(decoded_img, np.ndarray):
+        issues.append("El tipo de imagen debe ser numpy.ndarray")
 
     if decoded_img is None or decoded_img.size == 0:
-        issue.append("La imagen decodificada es inválida o está vacía.")
+        issues.append("La imagen está vacía")
+
+    if decoded_img.shape != (512, 512):
+        issues.append(f"Dimensión inválida: {decoded_img.shape}")
 
     if image_format not in ["JPG", "PNG", "WEBP"]:
-        issue.append(f"Formato de imagen no soportado: {image_format}")
+        issues.append(f"Formato no soportado: {image_format}")
 
-    metrics = calculate_metrics(decoded_img)
-    
+    # Validación de métricas
+
     for metric, value in metrics.items():
-        if metric in threshold_metrics:
-            if value > threshold_metrics[metric]:
-                issue.append(f"La métrica {metric} es mayor que el umbral: {value} > {threshold_metrics[metric]}")
 
-    return len(issue)==0, issue
+        if metric not in threshold_metrics:
+            continue
+
+        threshold = threshold_metrics[metric]
+
+        if "min" in threshold and value < threshold["min"]:
+            issues.append(
+                f"{metric} está por debajo del mínimo permitido"
+            )
+
+        if "max" in threshold and value > threshold["max"]:
+            issues.append(
+                f"{metric} supera el máximo permitido"
+            )
+
+    return len(issues) == 0, issues
